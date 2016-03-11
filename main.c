@@ -28,12 +28,15 @@
 #include "libavfilter/avfilter.h"
 
 //FIX
-struct URLProtocol;
+//struct URLProtocol;
 
 /**
  * Protocol Support Information
  */
-char *urlprotocolinfo(char *info) {
+char *urlprotocolinfo() {
+
+    char *info = (char *) malloc(40000);
+    memset(info, 0, 40000);
 
     av_register_all();
 
@@ -57,7 +60,10 @@ char *urlprotocolinfo(char *info) {
 /**
  * AVFormat Support Information
  */
-char *avformatinfo(char *info) {
+char *avformatinfo() {
+
+    char *info = (char *) malloc(40000);
+    memset(info, 0, 40000);
 
     av_register_all();
 
@@ -79,7 +85,9 @@ char *avformatinfo(char *info) {
 /**
  * AVCodec Support Information
  */
-char *avcodecinfo(char *info) {
+char *avcodecinfo() {
+    char *info = (char *) malloc(40000);
+    memset(info, 0, 40000);
 
     av_register_all();
 
@@ -114,12 +122,16 @@ char *avcodecinfo(char *info) {
 /**
  * AVFilter Support Information
  */
-char *avfilterinfo(char *info) {
-    av_register_all();
+char *avfilterinfo() {
+    char *info = (char *) malloc(40000);
+    memset(info, 0, 40000);
+
+    avfilter_register_all();
+
     AVFilter *f_temp = (AVFilter *) avfilter_next(NULL);
 
     while (f_temp != NULL) {
-        sprintf(info, "%s[%10s]\n", info, f_temp->name);
+        sprintf(info, "%s[%15s]\n", info, f_temp->name);
         f_temp = f_temp->next;
     }
     return info;
@@ -128,7 +140,10 @@ char *avfilterinfo(char *info) {
 /**
  * Configuration Information
  */
-char *configurationinfo(char *info) {
+char *configurationinfo() {
+    char *info = (char *) malloc(40000);
+    memset(info, 0, 40000);
+
     av_register_all();
 
     sprintf(info, "%s\n", avcodec_configuration());
@@ -137,12 +152,26 @@ char *configurationinfo(char *info) {
 }
 
 int main(int argc, char *argv[]) {
-    char info[40000] = {0};
-    printf("\n<<Configuration>>\n%s", configurationinfo(info));
-    printf("\n<<URLProtocol>>\n%s", urlprotocolinfo(info));
-    printf("\n<<AVFormat>>\n%s", avformatinfo(info));
-    printf("\n<<AVCodec>>\n%s", avcodecinfo(info));
-    printf("\n<<AVFilter>>\n%s", avfilterinfo(info));
+    char *infostr = NULL;
+    infostr = configurationinfo();
+    printf("\n<<Configuration>>\n%s", infostr);
+    free(infostr);
+
+    infostr = urlprotocolinfo();
+    printf("\n<<URLProtocol>>\n%s", infostr);
+    free(infostr);
+
+    infostr = avformatinfo();
+    printf("\n<<AVFormat>>\n%s", infostr);
+    free(infostr);
+
+    infostr = avcodecinfo();
+    printf("\n<<AVCodec>>\n%s", infostr);
+    free(infostr);
+
+    infostr = avfilterinfo();
+    printf("\n<<AVFilter>>\n%s", infostr);
+    free(infostr);
 
     return 0;
 }
